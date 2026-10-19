@@ -12,3 +12,4 @@ An open-source tool that checks news articles for writing quality, sourcing, and
 
 ## Limits
 Overwatch grades writing and sourcing only. It does not verify facts and cannot detect deepfakes. Scores can vary by about 10 points between runs. Treat results as a starting point, never a verdict.
+![Overwatch screenshot](screenshot.png)
