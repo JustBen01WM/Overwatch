@@ -5,6 +5,7 @@ from scraper import scrape_article
 from analyzer import analyze
 from scoring import compute_score, grade_from_score, explain_score
 from ratelimit import check_and_record
+from db import save_analysis, load_history
 
 st.set_page_config(page_title="Overwatch", page_icon="🔍")
 
@@ -106,11 +107,23 @@ def show_results(article, r):
 
 
 # ---------- Two ways in ----------
-tab_link, tab_text = st.tabs(["Paste a link", "Paste the text"])
+tab_link, tab_text, tab_history = st.tabs(["Paste a link", "Paste the text", "My history"])
 
 with tab_link:
     url = st.text_input("Article link").strip().strip("[]()<>\"' ")
-    go_link = st.button("Analyze link")
+    go_link = st.button("Analyze link") 
+
+with tab_history:
+    rows, err = load_history(st.user.email)
+    if err:
+        st.error(f"Couldn't load history: {err}")
+    elif not rows:
+        st.write("No saved analyses yet. Analyze an article and it will appear here.")
+    for row in rows:
+        when = (row.get("created_at") or "")[:10]
+        with st.expander(f"{row['grade']} ({row['score']}/100) · {row['title']} · {when}"):
+            st.write(row["result"].get("summary", ""))
+            st.caption(row.get("url") or "")
 
 with tab_text:
     st.caption("Use this for paywalled sites or sites that block scrapers.")
@@ -140,6 +153,12 @@ try:
 
             with st.spinner("Analyzing... this can take a minute if the AI is busy"):
                 r = analyze(article)
+            score = compute_score(r)
+            saved, save_err = save_analysis(
+                st.user.email, article, r, score, grade_from_score(score)
+            )
             show_results(article, r)
+            if not saved:
+                st.caption("This result couldn't be saved to your history.")
 except Exception as e:
     st.error(f"Couldn't analyze that: {e}")
