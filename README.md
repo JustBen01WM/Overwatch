@@ -2,7 +2,11 @@
 
 An open-source tool that checks news articles for writing quality, sourcing, and manipulation patterns.
 
+<<<<<<< HEAD
 **Live app:** https://overwatch-lshv9mmpizccbwwcfa7fgn.streamlit.app
+=======
+**Live app:** (https://overwatch-lshv9mmpizccbwwcfa7fgn.streamlit.app/)
+>>>>>>> 6be82efd75705a6ecbf525e51a991dc002dd8ca8
 
 ## What it does
 - Scrapes an article from a link, or accepts pasted text
