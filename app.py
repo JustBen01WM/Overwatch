@@ -4,7 +4,7 @@ import streamlit as st
 from scraper import scrape_article
 from analyzer import analyze
 from scoring import compute_score, grade_from_score, explain_score
-from ratelimit import check_and_record
+from ratelimit import check_limits
 from db import save_analysis, load_history
 
 st.set_page_config(page_title="Overwatch", page_icon="🔍")
@@ -146,7 +146,7 @@ try:
         }
 
     if article:
-        allowed, msg = check_and_record()
+        allowed, msg = check_limits(st.user.email)
         if not allowed:
             st.warning(msg)
         else:

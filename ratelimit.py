@@ -1,36 +1,33 @@
 import time
+from datetime import datetime, timezone
+
 import streamlit as st
+from db import count_since
 
-PER_VISITOR_LIMIT = 5
+PER_USER_DAILY = 10
+GLOBAL_DAILY = 100
 COOLDOWN_SECONDS = 30
-DAILY_LIMIT = 100
 
 
-@st.cache_resource
-def _daily_counter():
-    return {"day": time.strftime("%Y-%m-%d"), "count": 0}
-
-
-def check_and_record():
-    """Returns (allowed, message). Call it once before each analysis."""
-    daily = _daily_counter()
-    today = time.strftime("%Y-%m-%d")
-    if daily["day"] != today:
-        daily["day"] = today
-        daily["count"] = 0
-
-    if daily["count"] >= DAILY_LIMIT:
-        return False, "Overwatch has reached its daily limit. Please try again tomorrow."
-
-    used = st.session_state.get("used", 0)
-    if used >= PER_VISITOR_LIMIT:
-        return False, f"You've used your {PER_VISITOR_LIMIT} analyses for this visit."
-
+def check_limits(email):
+    """Returns (allowed, message). Call once before each analysis."""
     wait = COOLDOWN_SECONDS - (time.time() - st.session_state.get("last_time", 0))
     if wait > 0:
         return False, f"Please wait {int(wait) + 1} more seconds before the next analysis."
 
-    st.session_state["used"] = used + 1
+    start = datetime.now(timezone.utc).replace(
+        hour=0, minute=0, second=0, microsecond=0
+    ).isoformat()
+
+    mine, err1 = count_since(start, email)
+    total, err2 = count_since(start)
+    if err1 or err2:
+        return False, "Couldn't check your usage right now. Please try again in a moment."
+
+    if mine >= PER_USER_DAILY:
+        return False, f"You've used your {PER_USER_DAILY} analyses for today. Come back tomorrow."
+    if total >= GLOBAL_DAILY:
+        return False, "Overwatch has reached its daily limit. Please try again tomorrow."
+
     st.session_state["last_time"] = time.time()
-    daily["count"] += 1
     return True, ""

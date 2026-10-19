@@ -37,3 +37,13 @@ def load_history(email, limit=20):
         return resp.data, ""
     except Exception as e:
         return [], str(e)
+def count_since(start_iso, email=None):
+    """Counts saved analyses since a time. Returns (count, error_message)."""
+    try:
+        q = get_client().table("analyses").select("id", count="exact").gte("created_at", start_iso)
+        if email:
+            q = q.eq("user_email", email)
+        resp = q.execute()
+        return resp.count or 0, ""
+    except Exception as e:
+        return 0, str(e)
