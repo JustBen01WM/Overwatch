@@ -4,6 +4,7 @@ import streamlit as st
 from scraper import scrape_article
 from analyzer import analyze
 from scoring import compute_score, grade_from_score
+from ratelimit import check_and_record
 
 st.set_page_config(page_title="Overwatch", page_icon="🔍")
 
@@ -122,8 +123,13 @@ try:
         }
 
     if article:
-        with st.spinner("Analyzing... this can take a minute if the AI is busy"):
-            r = analyze(article)
-        show_results(article, r)
+        allowed, msg = check_and_record()
+        if not allowed:
+            st.warning(msg)
+        else:
+            
+            with st.spinner("Analyzing... this can take a minute if the AI is busy"):
+                r = analyze(article)
+            show_results(article, r)
 except Exception as e:
     st.error(f"Couldn't analyze that: {e}")
