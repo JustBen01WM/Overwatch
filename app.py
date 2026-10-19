@@ -47,7 +47,14 @@ h2, h3 { color: #e8d9ff; }
 
 st.title("🔍 Overwatch")
 st.caption("Open-source intelligence for the truth. Writing, sourcing, and manipulation patterns.")
+if not st.user.is_logged_in:
+    st.write("Sign in to use Overwatch.")
+    if st.button("Sign in with Google"):
+        st.login()
+    st.stop()
 
+st.sidebar.write(f"Signed in as {st.user.email}")
+st.sidebar.button("Log out", on_click=st.logout)
 
 # ---------- Show results ----------
 def show_results(article, r):

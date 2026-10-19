@@ -5,3 +5,4 @@ list_models.py
 test_ai.py
 test_scrape.py
 test_scraper.py
+.streamlit/secrets.toml
