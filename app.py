@@ -3,7 +3,7 @@ from urllib.parse import quote
 import streamlit as st
 from scraper import scrape_article
 from analyzer import analyze
-from scoring import compute_score, grade_from_score
+from scoring import compute_score, grade_from_score, explain_score
 from ratelimit import check_and_record
 
 st.set_page_config(page_title="Overwatch", page_icon="🔍")
@@ -59,6 +59,9 @@ def show_results(article, r):
     col2.metric("Grade", grade_from_score(score))
     col3.metric("Confidence", r["confidence"])
     st.caption("This grades writing and sourcing only. Facts are not verified.")
+    with st.expander("How this score was calculated"):
+        for label, pts in explain_score(r)[1]:
+            st.write(f"**{pts:+d}**  {label}")
 
     st.info(r["summary"])
 
@@ -127,7 +130,7 @@ try:
         if not allowed:
             st.warning(msg)
         else:
-            
+
             with st.spinner("Analyzing... this can take a minute if the AI is busy"):
                 r = analyze(article)
             show_results(article, r)
