@@ -6,7 +6,20 @@ from google import genai
 from google.genai import types
 
 load_dotenv()
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+import streamlit as st
+
+
+def get_key():
+    key = os.getenv("GEMINI_API_KEY")  # works on your computer (.env)
+    if key:
+        return key
+    try:
+        return st.secrets["GEMINI_API_KEY"]  # works on Streamlit Cloud
+    except Exception:
+        return None
+
+
+client = genai.Client(api_key=get_key())
 
 MODEL = "gemini-flash-lite-latest"  # change this one line if the model name changes
 
