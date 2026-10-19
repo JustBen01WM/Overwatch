@@ -31,7 +31,12 @@ def scrape_article(url):
         if src.startswith("http") and src not in images:
             images.append(src)
     images = images[:4]
-
+    if len(text) < 500:
+        raise ValueError(
+            "Not enough article text found. This may be a section page, a "
+            "paywalled article, or a site that blocks scrapers. Try a link to "
+            "a single article, or use the 'Paste the text' tab."
+        )
     return {
         "url": url,
         "title": soup.title.get_text(strip=True) if soup.title else "",
