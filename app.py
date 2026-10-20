@@ -48,6 +48,7 @@ h2, h3 { color: #e8d9ff; }
 
 st.title("🔍 Overwatch")
 st.caption("Open-source intelligence for the truth. Writing, sourcing, and manipulation patterns.")
+st.write("DEBUG:", st.user.to_dict())
 if not st.user.is_logged_in:
     st.write("Sign in to use Overwatch.")
     if st.button("Sign in with Google"):
