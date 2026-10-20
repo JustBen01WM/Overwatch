@@ -58,8 +58,8 @@ st.sidebar.write(f"Signed in as {st.user.email}")
 st.sidebar.button("Log out", on_click=st.logout)
 with st.sidebar.expander("Privacy"):
 st.sidebar.markdown(
-    "[Privacy Policy](https://justben01wm.github.io/overwatch/privacy) · "
-    "[Terms of Service](https://justben01wm.github.io/overwatch/terms)"
+    "[Privacy Policy](https://justben01wm.github.io/Overwatch/privacy) · "
+    "[Terms of Service](https://justben01wm.github.io/Overwatch/terms)"
 )
     st.caption(
         "When you analyze an article, Overwatch saves your email, the link, "
