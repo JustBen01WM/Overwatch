@@ -3,5 +3,5 @@ beautifulsoup4
 python-dotenv
 google-genai
 streamlit
-Authlib
+authlib
 supabase
